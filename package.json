@@ -1,0 +1,28 @@
+{
+  "name": "groupomania-backend",
+  "version": "1.0.0",
+  "description": "API pour le projet Groupomania",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pix-ggyr/Groupomania-Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pix-ggyr/Groupomania-Backend/issues"
+  },
+  "homepage": "https://github.com/Pix-ggyr/Groupomania-Backend#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.8",
+    "mysql": "^2.18.1"
+  }
+}
