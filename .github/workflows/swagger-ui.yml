@@ -15,12 +15,12 @@ jobs:
         id: swagger-ui-action
         uses: pjoc-team/swagger-ui-action@v0.0.2
         with:
-          dir: './'
+          dir: './doc'
           pattern: 'openapi-insomnia.json'
-          debug: 'true'
+          debug: 'false'
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: swagger-ui
-          publish_branch: master
+          publish_dir: doc
+          publish_branch: doc
