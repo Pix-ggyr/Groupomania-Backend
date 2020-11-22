@@ -15,7 +15,7 @@ jobs:
         id: swagger-ui-action
         uses: pjoc-team/swagger-ui-action@v0.0.2
         with:
-          dir: './doc'
+          dir: 'doc/'
           pattern: 'openapi-insomnia.json'
           debug: 'false'
       - name: Deploy to GitHub Pages
