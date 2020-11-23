@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const http = require('http');
 const app = require('./app');
 
