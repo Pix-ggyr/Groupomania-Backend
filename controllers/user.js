@@ -13,6 +13,11 @@ exports.register = (req, res) => {
   });
 };
 
-exports.login = (req, res) => {};
-
-exports.deleteUser = (req, res) => {};
+// exports.login = (req, res) => {};
+// exports.logout = (req, res) => {};
+// exports.createUser = (req, res) => {};
+// exports.updateUser = (req, res) => {};
+// exports.deleteUser = (req, res) => {};
+// exports.getAllUsers = (req, res) => {};
+// exports.getOneUser = (req, res) => {};
+// exports.getMyUser = (req, res) => {};

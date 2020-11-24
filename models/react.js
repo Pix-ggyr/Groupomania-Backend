@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize');
 
 module.exports = (db) => {
-  const Post = db.define(
-    'Post',
+  const React = db.define(
+    'React',
     {
       // attributes
       id: {
@@ -10,21 +10,17 @@ module.exports = (db) => {
         allowNull: false,
         primaryKey: true,
       },
+      postId: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       userId: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      title: {
+      type: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      content: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      image: {
-        type: Sequelize.STRING,
-        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -37,5 +33,5 @@ module.exports = (db) => {
     },
     {}
   );
-  return Post;
+  return React;
 };
