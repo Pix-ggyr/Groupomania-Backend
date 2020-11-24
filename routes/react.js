@@ -4,7 +4,7 @@ const router = express.Router();
 
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
-const reactCtrl = require('../controllers/react-ctrl');
+const reactCtrl = require('../controllers/react');
 
 router.get('/', auth, reactCtrl.getAllReacts);
 router.get('/:id', auth, reactCtrl.getAReact);

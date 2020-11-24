@@ -8,7 +8,7 @@ exports.createPost = (req, res) => {
   const image = req.body.image;
 };
 
-// exports.getAllPosts = (req, res) => {};
-// exports.getOnePost = (req, res) => {};
-// exports.updatePost = (req, res) => {};
-// exports.deletePost = (req, res) => {};
+exports.getAllPosts = (req, res) => {};
+exports.getOnePost = (req, res) => {};
+exports.updatePost = (req, res) => {};
+exports.deletePost = (req, res) => {};

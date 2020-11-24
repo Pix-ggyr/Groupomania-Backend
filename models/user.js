@@ -7,14 +7,14 @@ module.exports = (db) => {
       // attributes
       id: {
         type: Sequelize.NUMBER,
-        allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
       },
-      firstName: {
+      firstname: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      lastName: {
+      lastname: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -43,7 +43,7 @@ module.exports = (db) => {
         allowNull: false,
       },
     },
-    {}
+    { tableName: 'users' }
   );
   return User;
 };
