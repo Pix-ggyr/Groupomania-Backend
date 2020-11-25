@@ -109,6 +109,8 @@ exports.login = (req, res) => {
 };
 
 exports.logout = (req, res) => {
+  const getToken = req.params.accessToken;
+  console.log(getToken);
   // récupérer l'accessToken de la requête (req...)
   // rtfm revoke token jwt
 };
