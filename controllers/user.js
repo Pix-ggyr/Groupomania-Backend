@@ -109,9 +109,7 @@ exports.login = (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  const getToken = req.params.accessToken;
-  console.log(getToken);
-  // récupérer l'accessToken de la requête (req...)
+  const getToken = req.headers.authorization.split(' ')[1];
   // rtfm revoke token jwt
 };
 
@@ -177,8 +175,22 @@ exports.updateUser = (req, res) => {};
 
 exports.deleteUser = (req, res) => {};
 
-exports.getAllUsers = (req, res) => {};
+exports.getAllUsers = (req, res) => {
+  models.User.findAll()
+    .then((users) => {
+      return res.status(200).json(users);
+    })
+    .catch(() => {
+      return res.status(401).json({ message: 'Unauthorized' });
+    });
+  return true;
+};
 
 exports.getOneUser = (req, res) => {};
 
-exports.getMyUser = (req, res) => {};
+exports.getMyUser = (req, res) => {
+  return res.status(200).json({});
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
+  console.log('coucou', decodedToken);
+};
