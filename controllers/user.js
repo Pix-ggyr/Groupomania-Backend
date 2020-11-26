@@ -189,8 +189,17 @@ exports.getAllUsers = (req, res) => {
 exports.getOneUser = (req, res) => {};
 
 exports.getMyUser = (req, res) => {
-  return res.status(200).json({});
   const token = req.headers.authorization.split(' ')[1];
   const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
-  console.log('coucou', decodedToken);
+  const { id } = decodedToken;
+  models.User.findOne({
+    where: { id },
+  })
+    .then((user) => {
+      res.status(200).json(user);
+    })
+    .catch(() => {
+      res.status(401).json({ message: 'Unauthorized' });
+    });
+  return true;
 };
