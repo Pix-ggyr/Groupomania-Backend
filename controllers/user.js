@@ -1,17 +1,27 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const models = require('../models');
+// const validator = require('./validators/user.js');
 
 function generateAccessToken(data) {
   return jwt.sign(data, process.env.SECRET_TOKEN, { expiresIn: '3600s' });
 }
 
 function verifyEmail(email) {
+  if (!email) {
+    return false;
+  }
+
+  if (typeof email !== 'string') {
+    return false;
+  }
+
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,4}$/;
   return emailRegex.test(email);
 }
 
 function verifyAvatar(avatar) {
+  // eslint-disable-next-line no-useless-escape
   const avatarRegex = /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
   return avatarRegex.test(avatar);
 }
@@ -36,13 +46,13 @@ exports.register = (req, res) => {
   if (password.length < 8) {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (bio !== null && bio !== undefined && typeof bio !== 'string') {
+  if (bio !== undefined && typeof bio !== 'string') {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (avatar !== null && avatar !== undefined && typeof avatar !== 'string') {
+  if (avatar !== undefined && typeof avatar !== 'string') {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (avatar !== null && avatar !== undefined && !verifyAvatar(avatar)) {
+  if (avatar !== undefined && !verifyAvatar(avatar)) {
     return res.status(422).json({ message: 'Unprocessable entity' });
   }
   models.User.findOne({
@@ -171,9 +181,119 @@ exports.createUser = (req, res) => {
   return true;
 };
 
-exports.updateUser = (req, res) => {};
+exports.updateUser = (req, res) => {
+  /* eslint-disable */
+  // récup user qui a pour id req.params.id
+  // si erreur dans le .catch => return 500
+  // si !user => return 404
+  // on check les champs à modifier
+  // si erreur (email, password ou avatar) => return 400
+  // on update le user qui a pour id req.params.id
+  // si erreur dans le .catch => return 500
+  // on return 200 + updated user
+  const { id } = req.params;
+  models.User.findOne({
+    where: { id },
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ message: 'Not found' });
+      }
 
-exports.deleteUser = (req, res) => {};
+      const { firstname, lastname, email, password, bio, avatar } = req.body;
+
+      const modifications = {};
+
+      // les ifs si dessous
+
+      models.User.update(
+        {
+          ...modifications,
+        },
+        {
+          where: { id },
+        }
+      )
+        .then((updatedUser) => {
+          res.status(200).json(updatedUser);
+        })
+        .catch(() => {
+          res.status(500).json({ message: 'Internal server error' });
+        });
+    })
+    .catch(() => {
+      return res.status(500).json({ error: '...' });
+    });
+
+  /*
+
+    if (firstname && (firstname !== user.firstname) && (typeof firstname === 'string')) {
+      modifications.firstname = firstname;
+    }
+
+    if (lastname && (lastname !== user.lastname) && (typeof lastname === 'string')) {
+      modifications.lastname = lastname;
+    }
+
+    if (email && (email !== user.email) && (typeof email === 'string')) {
+      if (!verifyEmail(email)) {
+        // return Bad Request
+      }
+
+      const emailExist = await models.User.findOne({
+        attribute: ['email'],
+        where: { email },
+      });
+
+      if (emailExist) {
+        return conflict
+      }
+      modifications.email = email;
+    }
+
+    if (password && bcrypt.compareSync(password, user.password) && (typeof password === 'string')) {
+      if (!verifyPassword(password)) {
+        // return Bad Request
+      }
+
+      const newPassword = bcrypt.hashSync(password, 8);
+      modifications.password = newPassword;
+    }
+
+    if (bio && (bio !== user.bio) && (typeof bio === 'string')) {
+      modifications.bio = bio;
+    }
+
+    if (avatar && (avatar !== user.avatar) && (typeof avatar === 'string')) {
+      if (!verifyAvatar(avatar)) {
+        // return Bad Request
+      }
+
+      modifications.avatar = avatar;
+    }
+  */
+};
+
+exports.deleteUser = (req, res) => {
+  const { id } = req.params;
+  models.User.findOne({
+    where: { id },
+  }).then((user) => {
+    if (!user) {
+      return res.status(404).json({ message: 'Not found ' });
+    }
+    models.User.destroy({
+      where: { id },
+    })
+      .then(() => {
+        return res.status(200).json({ message: 'User has been deleted' });
+      })
+      .catch(() => {
+        return res.status(400).json({ message: 'Bad reques ' });
+      });
+    return true;
+  });
+};
 
 exports.getAllUsers = (req, res) => {
   models.User.findAll()
@@ -186,7 +306,19 @@ exports.getAllUsers = (req, res) => {
   return true;
 };
 
-exports.getOneUser = (req, res) => {};
+exports.getOneUser = (req, res) => {
+  const { id } = req.params;
+  models.User.findOne({
+    where: { id },
+  })
+    .then((user) => {
+      res.status(200).json(user);
+    })
+    .catch(() => {
+      res.status(404).json({ message: 'User not found' });
+    });
+  return true;
+};
 
 exports.getMyUser = (req, res) => {
   const token = req.headers.authorization.split(' ')[1];
