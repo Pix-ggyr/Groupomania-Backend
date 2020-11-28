@@ -204,7 +204,46 @@ exports.updateUser = (req, res) => {
 
       const modifications = {};
 
-      // les ifs si dessous
+      if (firstname && firstname !== user.firstname && typeof firstname === 'string') {
+        modifications.firstname = firstname;
+      }
+      if (lastname && lastname !== user.lastname && typeof lastname === 'string') {
+        modifications.lastname = lastname;
+      }
+      if (email && email !== user.email && typeof email === 'string') {
+        if (!verifyEmail(email)) {
+          return res.status(400).json({ message });
+        }
+      }
+      const emailExist = models.User.findOne({
+        attribute: ['email'],
+        where: { email },
+      });
+
+      if (emailExist) {
+        return conflict;
+      }
+      modifications.email = email;
+
+      if (password && bcrypt.compareSync(password, user.password) && typeof password === 'string') {
+        if (!verifyPassword(password)) {
+          return res.status(400).json({ message: 'Bad request' });
+        }
+        const newPassword = bcrypt.hashSync(password, 8);
+        modifications.password = newPassword;
+      }
+
+      if (bio && bio !== user.bio && typeof bio === 'string') {
+        modifications.bio = bio;
+      }
+
+      if (avatar && avatar !== user.avatar && typeof avatar === 'string') {
+        if (!verifyAvatar(avatar)) {
+          // return Bad Request
+        }
+
+        modifications.avatar = avatar;
+      }
 
       models.User.update(
         {
@@ -224,54 +263,6 @@ exports.updateUser = (req, res) => {
     .catch(() => {
       return res.status(500).json({ error: '...' });
     });
-
-  /*
-
-    if (firstname && (firstname !== user.firstname) && (typeof firstname === 'string')) {
-      modifications.firstname = firstname;
-    }
-
-    if (lastname && (lastname !== user.lastname) && (typeof lastname === 'string')) {
-      modifications.lastname = lastname;
-    }
-
-    if (email && (email !== user.email) && (typeof email === 'string')) {
-      if (!verifyEmail(email)) {
-        // return Bad Request
-      }
-
-      const emailExist = await models.User.findOne({
-        attribute: ['email'],
-        where: { email },
-      });
-
-      if (emailExist) {
-        return conflict
-      }
-      modifications.email = email;
-    }
-
-    if (password && bcrypt.compareSync(password, user.password) && (typeof password === 'string')) {
-      if (!verifyPassword(password)) {
-        // return Bad Request
-      }
-
-      const newPassword = bcrypt.hashSync(password, 8);
-      modifications.password = newPassword;
-    }
-
-    if (bio && (bio !== user.bio) && (typeof bio === 'string')) {
-      modifications.bio = bio;
-    }
-
-    if (avatar && (avatar !== user.avatar) && (typeof avatar === 'string')) {
-      if (!verifyAvatar(avatar)) {
-        // return Bad Request
-      }
-
-      modifications.avatar = avatar;
-    }
-  */
 };
 
 exports.deleteUser = (req, res) => {
