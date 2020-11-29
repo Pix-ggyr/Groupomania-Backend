@@ -1,12 +1,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { model } = require('mongoose');
 const models = require('../models');
 // const validator = require('./validators/user.js');
 
 function generateAccessToken(data) {
   return jwt.sign(data, process.env.SECRET_TOKEN, { expiresIn: '3600s' });
 }
-
 function verifyEmail(email) {
   if (!email) {
     return false;
@@ -19,31 +19,55 @@ function verifyEmail(email) {
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,4}$/;
   return emailRegex.test(email);
 }
-
 function verifyAvatar(avatar) {
   // eslint-disable-next-line no-useless-escape
   const avatarRegex = /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i;
   return avatarRegex.test(avatar);
 }
+function verifyPassword(password) {
+  if (password === undefined) {
+    return false;
+  }
+  if (typeof password !== 'string') {
+    return false;
+  }
+  if (password.length < 8) {
+    return false;
+  }
+  return true;
+}
+function verifyFirstname(firstname) {
+  if (firstname === undefined) {
+    return false;
+  }
+  if (typeof firstname !== 'string') {
+    return false;
+  }
+  return true;
+}
+function verifyLastname(lastname) {
+  if (lastname === undefined) {
+    return false;
+  }
+  if (typeof lastname !== 'string') {
+    return false;
+  }
+  return true;
+}
 
 exports.register = (req, res) => {
   const { email, firstname, lastname, password, bio, avatar } = req.body;
 
-  if (email === undefined || firstname === undefined || lastname === undefined || password === undefined) {
+  if (!verifyFirstname(firstname)) {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (
-    typeof email !== 'string' ||
-    typeof firstname !== 'string' ||
-    typeof lastname !== 'string' ||
-    typeof password !== 'string'
-  ) {
+  if (!verifyLastname(lastname)) {
     return res.status(400).json({ message: 'Bad request' });
   }
   if (!verifyEmail(email)) {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (password.length < 8) {
+  if (!verifyPassword(password)) {
     return res.status(400).json({ message: 'Bad request' });
   }
   if (bio !== undefined && typeof bio !== 'string') {
@@ -126,31 +150,25 @@ exports.logout = (req, res) => {
 exports.createUser = (req, res) => {
   const { email, firstname, lastname, password, bio, avatar } = req.body;
 
-  if (email === undefined || firstname === undefined || lastname === undefined || password === undefined) {
+  if (!verifyFirstname(firstname)) {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (
-    typeof email !== 'string' ||
-    typeof firstname !== 'string' ||
-    typeof lastname !== 'string' ||
-    typeof password !== 'string'
-  ) {
+  if (!verifyLastname(lastname)) {
     return res.status(400).json({ message: 'Bad request' });
   }
-
   if (!verifyEmail(email)) {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (password.length < 8) {
+  if (!verifyPassword(password)) {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (bio !== null && bio !== undefined && typeof bio !== 'string') {
+  if (bio !== undefined && typeof bio !== 'string') {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (avatar !== null && avatar !== undefined && typeof avatar !== 'string') {
+  if (avatar !== undefined && typeof avatar !== 'string') {
     return res.status(400).json({ message: 'Bad request' });
   }
-  if (avatar !== null && avatar !== undefined && !verifyAvatar(avatar)) {
+  if (avatar !== undefined && !verifyAvatar(avatar)) {
     return res.status(422).json({ message: 'Unprocessable entity' });
   }
   models.User.findOne({
@@ -182,20 +200,11 @@ exports.createUser = (req, res) => {
 };
 
 exports.updateUser = (req, res) => {
-  /* eslint-disable */
-  // récup user qui a pour id req.params.id
-  // si erreur dans le .catch => return 500
-  // si !user => return 404
-  // on check les champs à modifier
-  // si erreur (email, password ou avatar) => return 400
-  // on update le user qui a pour id req.params.id
-  // si erreur dans le .catch => return 500
-  // on return 200 + updated user
   const { id } = req.params;
   models.User.findOne({
     where: { id },
   })
-    .then((user) => {
+    .then(async (user) => {
       if (!user) {
         return res.status(404).json({ message: 'Not found' });
       }
@@ -212,18 +221,18 @@ exports.updateUser = (req, res) => {
       }
       if (email && email !== user.email && typeof email === 'string') {
         if (!verifyEmail(email)) {
-          return res.status(400).json({ message });
+          return res.status(400).json({ message: 'Bad request' });
         }
-      }
-      const emailExist = models.User.findOne({
-        attribute: ['email'],
-        where: { email },
-      });
+        const emailExist = await models.User.findOne({
+          attribute: ['email'],
+          where: { email },
+        });
 
-      if (emailExist) {
-        return conflict;
+        if (emailExist) {
+          return res.status(409).json({ message: 'Conflict' });
+        }
+        modifications.email = email;
       }
-      modifications.email = email;
 
       if (password && bcrypt.compareSync(password, user.password) && typeof password === 'string') {
         if (!verifyPassword(password)) {
@@ -239,30 +248,33 @@ exports.updateUser = (req, res) => {
 
       if (avatar && avatar !== user.avatar && typeof avatar === 'string') {
         if (!verifyAvatar(avatar)) {
-          // return Bad Request
+          return res.status(400).json({ message: 'Bad request' });
         }
 
         modifications.avatar = avatar;
       }
 
-      models.User.update(
-        {
-          ...modifications,
-        },
-        {
-          where: { id },
-        }
-      )
-        .then((updatedUser) => {
-          res.status(200).json(updatedUser);
+      models.User.update({ ...modifications }, { where: { id } })
+        .then(() => {
+          models.User.findOne({
+            where: { id },
+          })
+            .then((updatedUser) => {
+              res.status(200).json(updatedUser);
+            })
+            .catch(() => {
+              res.status(500).json({ message: 'Internal server error' });
+            });
         })
         .catch(() => {
           res.status(500).json({ message: 'Internal server error' });
         });
+      return true;
     })
     .catch(() => {
-      return res.status(500).json({ error: '...' });
+      return res.status(500).json({ message: 'Internal server error' });
     });
+  return true;
 };
 
 exports.deleteUser = (req, res) => {
