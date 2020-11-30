@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { model } = require('mongoose');
 const models = require('../models');
 // const validator = require('./validators/user.js');
 
@@ -37,19 +36,13 @@ function verifyPassword(password) {
   return true;
 }
 function verifyFirstname(firstname) {
-  if (firstname === undefined) {
-    return false;
-  }
-  if (typeof firstname !== 'string') {
+  if (firstname === undefined || typeof firstname !== 'string') {
     return false;
   }
   return true;
 }
 function verifyLastname(lastname) {
-  if (lastname === undefined) {
-    return false;
-  }
-  if (typeof lastname !== 'string') {
+  if (lastname === undefined || typeof lastname !== 'string') {
     return false;
   }
   return true;
