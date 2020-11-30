@@ -49,28 +49,13 @@ function verifyLastname(lastname) {
 }
 
 exports.register = (req, res) => {
-  const { email, firstname, lastname, password, bio, avatar } = req.body;
+  const { email, password } = req.body;
 
-  if (!verifyFirstname(firstname)) {
-    return res.status(400).json({ message: 'Bad request' });
-  }
-  if (!verifyLastname(lastname)) {
-    return res.status(400).json({ message: 'Bad request' });
-  }
   if (!verifyEmail(email)) {
     return res.status(400).json({ message: 'Bad request' });
   }
   if (!verifyPassword(password)) {
     return res.status(400).json({ message: 'Bad request' });
-  }
-  if (bio !== undefined && typeof bio !== 'string') {
-    return res.status(400).json({ message: 'Bad request' });
-  }
-  if (avatar !== undefined && typeof avatar !== 'string') {
-    return res.status(400).json({ message: 'Bad request' });
-  }
-  if (avatar !== undefined && !verifyAvatar(avatar)) {
-    return res.status(422).json({ message: 'Unprocessable entity' });
   }
   models.User.findOne({
     attributes: ['email'],
@@ -84,7 +69,7 @@ exports.register = (req, res) => {
       bcrypt
         .hash(password, 8)
         .then((hash) => {
-          models.User.create({ firstname, lastname, email, password: hash, bio, avatar })
+          models.User.create({ email, password: hash })
             .then((user) => {
               const accessToken = generateAccessToken({ email: user.email, id: user.id });
               return res.status(201).json({ user, accessToken });
@@ -285,13 +270,13 @@ exports.deleteUser = (req, res) => {
         return res.status(200).json({ message: 'User has been deleted' });
       })
       .catch(() => {
-        return res.status(400).json({ message: 'Bad reques ' });
+        return res.status(400).json({ message: 'Bad request' });
       });
     return true;
   });
 };
 
-exports.getAllUsers = (req, res) => {
+exports.getAllUsers = (_req, res) => {
   models.User.findAll()
     .then((users) => {
       return res.status(200).json(users);

@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const models = require('../models');
 
 function verifyTitle(title) {
@@ -22,9 +23,14 @@ function verifyImage(image) {
 }
 
 exports.createPost = (req, res) => {
-  const { userId, title, content, image } = req.body;
-  if (!userId) {
-    return res.status(400).json({ message: 'Bad request' });
+  const { title, content, image } = req.body;
+
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
+  const { id } = decodedToken;
+
+  if (!id) {
+    return res.status(400).json({ message: 'Bad request 1' });
   }
 
   if (!verifyTitle(title)) {
@@ -36,7 +42,12 @@ exports.createPost = (req, res) => {
   if (!verifyImage(image)) {
     return res.status(400).json({ message: 'Bad request' });
   }
-  models.Post.create({ userId, title, content, image })
+  models.Post.create({
+    userId: id,
+    title,
+    content,
+    image,
+  })
     .then((post) => {
       return res.status(201).json(post);
     })
@@ -46,7 +57,91 @@ exports.createPost = (req, res) => {
   return true;
 };
 
-exports.getAllPosts = (req, res) => {};
-exports.getOnePost = (req, res) => {};
-exports.updatePost = (req, res) => {};
-exports.deletePost = (req, res) => {};
+exports.getAllPosts = (_req, res) => {
+  models.Post.findAll()
+    .then((posts) => {
+      return res.status(200).json(posts);
+    })
+    .catch(() => {
+      return res.status(401).json({ message: 'Unauthorized' });
+    });
+  return true;
+};
+exports.getOnePost = (req, res) => {
+  const { id } = req.params;
+  models.Post.findOne({
+    where: { id },
+  })
+    .then((post) => {
+      res.status(200).json(post);
+    })
+    .catch(() => {
+      res.status(404).json({ message: 'Post not found' });
+    });
+  return true;
+};
+exports.updatePost = (req, res) => {
+  const { id } = req.params;
+  models.Post.findOne({
+    where: { id },
+  })
+    .then(async (post) => {
+      if (!post) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+
+      const { title, content, image } = req.body;
+      const modifications = {};
+
+      if (title && title !== post.title && typeof title === 'string') {
+        modifications.title = title;
+      }
+      if (content && content !== post.content && typeof content === 'string') {
+        modifications.content = content;
+      }
+      if (image && image !== post.image && typeof image === 'string') {
+        modifications.image = image;
+      }
+
+      models.Post.update({ ...modifications }, { where: { id } })
+        .then(() => {
+          models.Post.findOne({
+            where: { id },
+          })
+            .then((updatedPost) => {
+              res.status(200).json(updatedPost);
+            })
+            .catch(() => {
+              res.status(500).json({ message: 'Internal server error' });
+            });
+        })
+        .catch(() => {
+          res.status(500).json({ message: 'Internal server error' });
+        });
+      return true;
+    })
+    .catch(() => {
+      res.status(500).json({ message: 'Internal server error' });
+    });
+  return true;
+};
+exports.deletePost = (req, res) => {
+  const { id } = req.params;
+  models.Post.findOne({
+    where: { id },
+  }).then((post) => {
+    if (!post) {
+      return res.status(404).json({ message: 'Not found' });
+    }
+    models.Post.destroy({
+      where: { id },
+    })
+      .then(() => {
+        return res.status(200).json({ message: 'Post has been deleted' });
+      })
+      .catch(() => {
+        return res.status(400).json({ message: 'Bad request' });
+      });
+    return true;
+  });
+};

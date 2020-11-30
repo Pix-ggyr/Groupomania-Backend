@@ -7,7 +7,7 @@ module.exports = (db) => {
       // attributes
       id: {
         type: Sequelize.NUMBER,
-        allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
       },
       postId: {
@@ -31,7 +31,7 @@ module.exports = (db) => {
         allowNull: false,
       },
     },
-    {}
+    { tableName: 'reacts' }
   );
   return React;
 };

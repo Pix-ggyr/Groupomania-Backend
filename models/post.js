@@ -7,11 +7,11 @@ module.exports = (db) => {
       // attributes
       id: {
         type: Sequelize.NUMBER,
-        allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
       },
       userId: {
-        type: Sequelize.STRING,
+        type: Sequelize.NUMBER,
         allowNull: false,
       },
       title: {
@@ -35,7 +35,7 @@ module.exports = (db) => {
         allowNull: false,
       },
     },
-    {}
+    { tableName: 'posts' }
   );
   return Post;
 };
