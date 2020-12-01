@@ -9,8 +9,8 @@ function verifyTitle(title) {
 }
 
 function verifyContent(content) {
-  if (content === undefined || content !== undefined) {
-    return true;
+  if (content === undefined) {
+    return false;
   }
   if (typeof content !== 'string') {
     return false;
@@ -19,8 +19,8 @@ function verifyContent(content) {
 }
 
 function verifyImage(image) {
-  if (image === undefined || image !== undefined) {
-    return true;
+  if (image === undefined) {
+    return false;
   }
   if (typeof image !== 'string') {
     return false;
@@ -36,17 +36,17 @@ exports.createPost = (req, res) => {
   const { id } = decodedToken;
 
   if (!id) {
-    return res.status(400).json({ message: 'Bad request 1' });
+    return res.status(400).json({ message: 'Bad request' });
   }
 
   if (!verifyTitle(title)) {
-    return res.status(400).json({ message: 'Bad request 2' });
+    return res.status(400).json({ message: 'Bad request' });
   }
-  if (!verifyContent(content)) {
-    return res.status(400).json({ message: 'Bad request 3' });
+  if (content !== undefined && !verifyContent(content)) {
+    return res.status(400).json({ message: 'Bad request' });
   }
-  if (!verifyImage(image)) {
-    return res.status(400).json({ message: 'Bad request 4' });
+  if (image !== undefined && !verifyImage(image)) {
+    return res.status(400).json({ message: 'Bad request' });
   }
   models.Post.create({
     userId: id,
@@ -57,8 +57,8 @@ exports.createPost = (req, res) => {
     .then((post) => {
       return res.status(201).json(post);
     })
-    .catch((error) => {
-      return res.status(400).json({ error });
+    .catch(() => {
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };
@@ -69,23 +69,28 @@ exports.getAllPosts = (_req, res) => {
       return res.status(200).json(posts);
     })
     .catch(() => {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };
+
 exports.getOnePost = (req, res) => {
   const { id } = req.params;
   models.Post.findOne({
     where: { id },
   })
     .then((post) => {
-      res.status(200).json(post);
+      if (!post) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.status(200).json(post);
     })
     .catch(() => {
-      res.status(404).json({ message: 'Post not found' });
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };
+
 exports.updatePost = (req, res) => {
   const { id } = req.params;
   models.Post.findOne({
@@ -131,6 +136,7 @@ exports.updatePost = (req, res) => {
     });
   return true;
 };
+
 exports.deletePost = (req, res) => {
   const { id } = req.params;
   models.Post.findOne({
@@ -146,7 +152,7 @@ exports.deletePost = (req, res) => {
         return res.status(200).json({ message: 'Post has been deleted' });
       })
       .catch(() => {
-        return res.status(400).json({ message: 'Bad request' });
+        return res.status(500).json({ message: 'Internal server error' });
       });
     return true;
   });

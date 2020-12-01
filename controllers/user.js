@@ -120,10 +120,12 @@ exports.login = (req, res) => {
   return true;
 };
 
+/* eslint-disable */
 exports.logout = (req, res) => {
   const getToken = req.headers.authorization.split(' ')[1];
   // rtfm revoke token jwt
 };
+/* eslint-enable */
 
 exports.createUser = (req, res) => {
   const { email, firstname, lastname, password, bio, avatar } = req.body;
@@ -270,7 +272,7 @@ exports.deleteUser = (req, res) => {
         return res.status(200).json({ message: 'User has been deleted' });
       })
       .catch(() => {
-        return res.status(400).json({ message: 'Bad request' });
+        return res.status(500).json({ message: 'Internal server error' });
       });
     return true;
   });
@@ -282,7 +284,7 @@ exports.getAllUsers = (_req, res) => {
       return res.status(200).json(users);
     })
     .catch(() => {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };
@@ -293,10 +295,13 @@ exports.getOneUser = (req, res) => {
     where: { id },
   })
     .then((user) => {
-      res.status(200).json(user);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      return res.status(200).json(user);
     })
     .catch(() => {
-      res.status(404).json({ message: 'User not found' });
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };
@@ -309,10 +314,10 @@ exports.getMyUser = (req, res) => {
     where: { id },
   })
     .then((user) => {
-      res.status(200).json(user);
+      return res.status(200).json(user);
     })
     .catch(() => {
-      res.status(401).json({ message: 'Unauthorized' });
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };

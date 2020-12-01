@@ -30,8 +30,8 @@ exports.createReact = (req, res) => {
     .then((react) => {
       return res.status(201).json(react);
     })
-    .catch((error) => {
-      return res.status(400).json({ error });
+    .catch(() => {
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };
@@ -42,21 +42,23 @@ exports.getAllReacts = (_req, res) => {
       return res.status(200).json(reacts);
     })
     .catch(() => {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };
 exports.getAReact = (req, res) => {
   const { id } = req.params;
-  console.log({ id });
-  models.Reacts.findOne({
+  models.React.findOne({
     where: { id },
   })
     .then((react) => {
-      res.status(200).json(react);
+      if (react === null) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      return res.status(200).json(react);
     })
     .catch(() => {
-      res.status(404).json({ message: 'Not found' });
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };
@@ -83,10 +85,10 @@ exports.updateReact = (req, res) => {
             where: { id },
           })
             .then((updatedReact) => {
-              res.status(200).json(updatedReact);
+              return res.status(200).json(updatedReact);
             })
             .catch(() => {
-              res.status(500).json({ message: 'Internal server error' });
+              return res.status(500).json({ message: 'Internal server error' });
             });
         })
         .catch(() => {
@@ -95,7 +97,7 @@ exports.updateReact = (req, res) => {
       return true;
     })
     .catch(() => {
-      res.status(500).json({ message: 'Internal server error' });
+      return res.status(500).json({ message: 'Internal server error' });
     });
   return true;
 };
@@ -114,7 +116,7 @@ exports.deleteReact = (req, res) => {
         return res.status(200).json({ message: 'Reaction has been deleted' });
       })
       .catch(() => {
-        return res.status(400).json({ message: 'Bad request' });
+        return res.status(500).json({ message: 'Internal server error' });
       });
     return true;
   });
