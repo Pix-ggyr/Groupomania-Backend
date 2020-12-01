@@ -48,6 +48,7 @@ exports.getAllReacts = (_req, res) => {
 };
 exports.getAReact = (req, res) => {
   const { id } = req.params;
+  console.log({ id });
   models.Reacts.findOne({
     where: { id },
   })

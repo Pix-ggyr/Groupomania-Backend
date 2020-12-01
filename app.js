@@ -5,6 +5,7 @@ const path = require('path');
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/post');
 const reactRoutes = require('./routes/react');
+const activityRoutes = require('./routes/activity');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/post', postRoutes);
 app.use('/api/v1/react', reactRoutes);
+app.use('/api/v1/activity', activityRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;

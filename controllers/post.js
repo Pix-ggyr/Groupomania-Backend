@@ -9,6 +9,9 @@ function verifyTitle(title) {
 }
 
 function verifyContent(content) {
+  if (content === undefined || content !== undefined) {
+    return true;
+  }
   if (typeof content !== 'string') {
     return false;
   }
@@ -16,6 +19,9 @@ function verifyContent(content) {
 }
 
 function verifyImage(image) {
+  if (image === undefined || image !== undefined) {
+    return true;
+  }
   if (typeof image !== 'string') {
     return false;
   }
@@ -34,13 +40,13 @@ exports.createPost = (req, res) => {
   }
 
   if (!verifyTitle(title)) {
-    return res.status(400).json({ message: 'Bad request' });
+    return res.status(400).json({ message: 'Bad request 2' });
   }
   if (!verifyContent(content)) {
-    return res.status(400).json({ message: 'Bad request' });
+    return res.status(400).json({ message: 'Bad request 3' });
   }
   if (!verifyImage(image)) {
-    return res.status(400).json({ message: 'Bad request' });
+    return res.status(400).json({ message: 'Bad request 4' });
   }
   models.Post.create({
     userId: id,

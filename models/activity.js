@@ -7,6 +7,7 @@ module.exports = (db) => {
       // attributes
       id: {
         type: Sequelize.NUMBER,
+        autoIncrement: true,
         allowNull: false,
         primaryKey: true,
       },
@@ -27,7 +28,7 @@ module.exports = (db) => {
         allowNull: false,
       },
     },
-    {}
+    { tableName: 'activities' }
   );
   return Activity;
 };
