@@ -27,7 +27,12 @@ exports.createReact = (req, res) => {
     postId,
     type,
   })
-    .then((react) => {
+    .then(async (react) => {
+      await models.Activity.create({
+        userId: id,
+        postId,
+        type: 'react',
+      });
       return res.status(201).json(react);
     })
     .catch(() => {
@@ -36,8 +41,9 @@ exports.createReact = (req, res) => {
   return true;
 };
 
-exports.getAllReacts = (_req, res) => {
-  models.React.findAll()
+exports.getAllReacts = (req, res) => {
+  const filter = req.query.postId ? { where: { postId: req.query.postId } } : {};
+  models.React.findAll(filter)
     .then((reacts) => {
       return res.status(200).json(reacts);
     })

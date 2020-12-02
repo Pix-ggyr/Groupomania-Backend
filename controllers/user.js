@@ -49,13 +49,19 @@ function verifyLastname(lastname) {
 }
 
 exports.register = (req, res) => {
-  const { email, password } = req.body;
+  const { firstname, lastname, email, password } = req.body;
 
+  if (!verifyFirstname(firstname)) {
+    return res.status(400).json({ message: 'Bad request 1' });
+  }
+  if (!verifyLastname(lastname)) {
+    return res.status(400).json({ message: 'Bad request 2' });
+  }
   if (!verifyEmail(email)) {
-    return res.status(400).json({ message: 'Bad request' });
+    return res.status(400).json({ message: 'Bad request 3' });
   }
   if (!verifyPassword(password)) {
-    return res.status(400).json({ message: 'Bad request' });
+    return res.status(400).json({ message: 'Bad request 4' });
   }
   models.User.findOne({
     attributes: ['email'],
@@ -69,17 +75,21 @@ exports.register = (req, res) => {
       bcrypt
         .hash(password, 8)
         .then((hash) => {
-          models.User.create({ email, password: hash })
-            .then((user) => {
+          models.User.create({ firstname, lastname, email, password: hash })
+            .then(async (user) => {
+              await models.Activity.create({
+                userId: user.id,
+                type: 'register',
+              });
               const accessToken = generateAccessToken({ email: user.email, id: user.id });
               return res.status(201).json({ user, accessToken });
             })
             .catch(() => {
-              return res.status(400).json({ message: 'Bad request' });
+              return res.status(400).json({ message: 'Bad request 5' });
             });
         })
         .catch(() => {
-          return res.status(400).json({ message: 'Bad request' });
+          return res.status(400).json({ message: 'Bad request 6' });
         });
     }
   });
@@ -164,7 +174,11 @@ exports.createUser = (req, res) => {
         .hash(password, 8)
         .then((hash) => {
           models.User.create({ firstname, lastname, email, password: hash, bio, avatar })
-            .then((user) => {
+            .then(async (user) => {
+              await models.Activity.create({
+                userId: user.id,
+                type: 'register',
+              });
               return res.status(201).json(user);
             })
             .catch(() => {

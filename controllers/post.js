@@ -54,7 +54,12 @@ exports.createPost = (req, res) => {
     content,
     image,
   })
-    .then((post) => {
+    .then(async (post) => {
+      await models.Activity.create({
+        userId: id,
+        postId: post.id,
+        type: 'post',
+      });
       return res.status(201).json(post);
     })
     .catch(() => {
@@ -64,7 +69,9 @@ exports.createPost = (req, res) => {
 };
 
 exports.getAllPosts = (_req, res) => {
-  models.Post.findAll()
+  models.Post.findAll({
+    order: [['createdAt', 'DESC']],
+  })
     .then((posts) => {
       return res.status(200).json(posts);
     })

@@ -12,8 +12,12 @@ module.exports = (db) => {
         primaryKey: true,
       },
       userId: {
-        type: Sequelize.STRING,
+        type: Sequelize.NUMBER,
         allowNull: false,
+      },
+      postId: {
+        type: Sequelize.NUMBER,
+        allowNull: true,
       },
       type: {
         type: Sequelize.STRING,
