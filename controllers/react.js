@@ -8,7 +8,7 @@ function verifyType(type) {
   return true;
 }
 
-exports.createReact = (req, res) => {
+exports.createReact = async (req, res) => {
   const { postId, type } = req.body;
 
   const token = req.headers.authorization.split(' ')[1];
@@ -22,23 +22,23 @@ exports.createReact = (req, res) => {
   if (!verifyType(type)) {
     return res.status(400).json({ message: 'Bad request' });
   }
-  models.React.create({
-    userId: id,
-    postId,
-    type,
-  })
-    .then(async (react) => {
-      await models.Activity.create({
-        userId: id,
-        postId,
-        type: 'react',
-      });
-      return res.status(201).json(react);
-    })
-    .catch(() => {
-      return res.status(500).json({ message: 'Internal server error' });
+  try {
+    const existingReact = await models.React.findOne({
+      where: { userId: id, postId, type },
     });
-  return true;
+    if (existingReact !== null) {
+      return res.status(409).json({ message: 'Conflict' });
+    }
+    const react = await models.React.create({ userId: id, postId, type });
+    await models.Activity.create({
+      userId: id,
+      postId,
+      type: 'react',
+    });
+    return res.status(201).json(react);
+  } catch (_error) {
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 exports.getAllReacts = (req, res) => {
@@ -109,21 +109,54 @@ exports.updateReact = (req, res) => {
 };
 exports.deleteReact = (req, res) => {
   const { id } = req.params;
+
   models.React.findOne({
     where: { id },
-  }).then((react) => {
-    if (!react) {
-      return res.status(404).json({ message: 'Not found' });
-    }
-    models.React.destroy({
-      where: { id },
-    })
-      .then(() => {
-        return res.status(200).json({ message: 'Reaction has been deleted' });
+  })
+    .then((react) => {
+      if (!react) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      models.React.destroy({
+        where: { id },
       })
-      .catch(() => {
-        return res.status(500).json({ message: 'Internal server error' });
-      });
-    return true;
-  });
+        .then(() => {
+          return res.status(200).json({ message: 'Reaction has been deleted' });
+        })
+        .catch(() => {
+          return res.status(500).json({ message: 'Internal server error' });
+        });
+      return true;
+    })
+    .catch(() => {
+      return res.status(500).json({ message: 'Internal server error' });
+    });
+  return true;
+};
+
+exports.findeAndDelete = (req, res) => {
+  const { userId, postId, type } = req.query;
+
+  models.React.findOne({
+    where: { userId, postId, type },
+  })
+    .then((react) => {
+      if (!react) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      models.React.destroy({
+        where: { id: react.id },
+      })
+        .then(() => {
+          return res.status(200).json({ message: 'Reaction has been deleted' });
+        })
+        .catch(() => {
+          return res.status(500).json({ message: 'Internal server error' });
+        });
+      return true;
+    })
+    .catch((error) => {
+      console.log(error);
+      return res.status(500).json({ message: 'Internal server error' });
+    });
 };
