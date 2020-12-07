@@ -7,6 +7,21 @@ function verifyType(type) {
   }
   return true;
 }
+function hasRights(token, ressource) {
+  if (token.userId === ressource.userId) {
+    return true;
+  }
+  if (token.isAdmin) {
+    return true;
+  }
+  return false;
+}
+
+function getDecodedToken(req) {
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
+  return decodedToken;
+}
 
 exports.createReact = async (req, res) => {
   const { postId, type } = req.body;
@@ -78,6 +93,11 @@ exports.updateReact = (req, res) => {
         return res.status(404).json({ message: 'Not found' });
       }
 
+      const decodedToken = getDecodedToken(req);
+      if (!hasRights(decodedToken, react)) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+
       const { type } = req.body;
       const modifications = {};
 
@@ -134,7 +154,7 @@ exports.deleteReact = (req, res) => {
   return true;
 };
 
-exports.findeAndDelete = (req, res) => {
+exports.findOneAndDelete = (req, res) => {
   const { userId, postId, type } = req.query;
 
   models.React.findOne({
@@ -143,6 +163,10 @@ exports.findeAndDelete = (req, res) => {
     .then((react) => {
       if (!react) {
         return res.status(404).json({ message: 'Not found' });
+      }
+      const decodedToken = getDecodedToken(req);
+      if (!hasRights(decodedToken, react)) {
+        return res.status(401).json({ message: 'Unauthorized' });
       }
       models.React.destroy({
         where: { id: react.id },
@@ -155,8 +179,7 @@ exports.findeAndDelete = (req, res) => {
         });
       return true;
     })
-    .catch((error) => {
-      console.log(error);
+    .catch(() => {
       return res.status(500).json({ message: 'Internal server error' });
     });
 };

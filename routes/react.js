@@ -10,5 +10,5 @@ router.get('/', auth, reactCtrl.getAllReacts);
 router.get('/:id', auth, reactCtrl.getAReact);
 router.put('/:id', auth, reactCtrl.updateReact);
 router.delete('/:id', auth, reactCtrl.deleteReact);
-router.delete('/', auth, reactCtrl.findeAndDelete);
+router.delete('/', auth, reactCtrl.findOneAndDelete);
 module.exports = router;
