@@ -28,6 +28,22 @@ function verifyImage(image) {
   return true;
 }
 
+function hasRights(token, ressource) {
+  if (token.userId === ressource.userId) {
+    return true;
+  }
+  if (token.isAdmin) {
+    return true;
+  }
+  return false;
+}
+
+function getDecodedToken(req) {
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
+  return decodedToken;
+}
+
 exports.createPost = (req, res) => {
   const { title, content, image } = req.body;
 
@@ -108,6 +124,11 @@ exports.updatePost = (req, res) => {
         return res.status(404).json({ message: 'Not found' });
       }
 
+      const decodedToken = getDecodedToken(req);
+      if (!hasRights(decodedToken, post)) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+
       const { title, content, image } = req.body;
       const modifications = {};
 
@@ -152,6 +173,11 @@ exports.deletePost = (req, res) => {
     if (!post) {
       return res.status(404).json({ message: 'Not found' });
     }
+    const decodedToken = getDecodedToken(req);
+    if (!hasRights(decodedToken, post)) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
     models.Post.destroy({
       where: { id },
     })

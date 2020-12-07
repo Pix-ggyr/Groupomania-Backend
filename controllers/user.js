@@ -3,6 +3,22 @@ const jwt = require('jsonwebtoken');
 const models = require('../models');
 // const validator = require('./validators/user.js');
 
+function hasRights(token, ressource) {
+  if (token.userId === ressource.id) {
+    return true;
+  }
+  if (token.isAdmin) {
+    return true;
+  }
+  return false;
+}
+
+function getDecodedToken(req) {
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
+  return decodedToken;
+}
+
 function generateAccessToken(data) {
   return jwt.sign(data, process.env.SECRET_TOKEN, { expiresIn: '3600s' });
 }
@@ -52,16 +68,16 @@ exports.register = (req, res) => {
   const { firstname, lastname, email, password } = req.body;
 
   if (!verifyFirstname(firstname)) {
-    return res.status(400).json({ message: 'Bad request 1' });
+    return res.status(400).json({ message: 'Bad request' });
   }
   if (!verifyLastname(lastname)) {
-    return res.status(400).json({ message: 'Bad request 2' });
+    return res.status(400).json({ message: 'Bad request' });
   }
   if (!verifyEmail(email)) {
-    return res.status(400).json({ message: 'Bad request 3' });
+    return res.status(400).json({ message: 'Bad request' });
   }
   if (!verifyPassword(password)) {
-    return res.status(400).json({ message: 'Bad request 4' });
+    return res.status(400).json({ message: 'Bad request' });
   }
   models.User.findOne({
     attributes: ['email'],
@@ -119,7 +135,11 @@ exports.login = (req, res) => {
         if (!passwordsMatch) {
           return res.status(400).json({ message: 'Bad request' });
         }
-        const accessToken = generateAccessToken({ email: existingUser.email, id: existingUser.id });
+        const accessToken = generateAccessToken({
+          email: existingUser.email,
+          id: existingUser.id,
+          isAdmin: existingUser.isAdmin,
+        });
         return res.status(200).json({ user: existingUser, accessToken });
       })
       .catch(() => {
@@ -202,6 +222,10 @@ exports.updateUser = (req, res) => {
       if (!user) {
         return res.status(404).json({ message: 'Not found user' });
       }
+      const decodedToken = getDecodedToken(req);
+      if (!hasRights(decodedToken, user)) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
 
       const { firstname, lastname, email, password, bio, avatar } = req.body;
 
@@ -278,6 +302,10 @@ exports.deleteUser = (req, res) => {
   }).then((user) => {
     if (!user) {
       return res.status(404).json({ message: 'Not found ' });
+    }
+    const decodedToken = getDecodedToken(req);
+    if (!hasRights(decodedToken, user)) {
+      return res.status(401).json({ message: 'Unauthorized' });
     }
     models.User.destroy({
       where: { id },
