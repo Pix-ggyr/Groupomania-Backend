@@ -1,5 +1,18 @@
 # Groupomania-Backend
 
-API pour le projet Groupomania
+## API pour l'application Groupomania Social Network**
 
-Access OpenApi online doc [here](https://pix-ggyr.github.io/Groupomania-Backend/)
+Access OpenApi Online Doc by clicking [here](https://pix-ggyr.github.io/Groupomania-Backend/)
+You can also access the repository by following this [link](https://github.com/Pix-ggyr/Groupomania-API-documentation)
+
+## Quick start
+
+### Projet setup
+```
+npm install
+```
+
+### Then, run Node server
+```
+npm run serve
+```
