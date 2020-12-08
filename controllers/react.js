@@ -8,7 +8,7 @@ function verifyType(type) {
   return true;
 }
 function hasRights(token, ressource) {
-  if (token.userId === ressource.userId) {
+  if (token.id === ressource.userId) {
     return true;
   }
   if (token.isAdmin) {
@@ -154,32 +154,25 @@ exports.deleteReact = (req, res) => {
   return true;
 };
 
-exports.findOneAndDelete = (req, res) => {
+exports.findOneAndDelete = async (req, res) => {
   const { userId, postId, type } = req.query;
-
-  models.React.findOne({
-    where: { userId, postId, type },
-  })
-    .then((react) => {
-      if (!react) {
-        return res.status(404).json({ message: 'Not found' });
-      }
-      const decodedToken = getDecodedToken(req);
-      if (!hasRights(decodedToken, react)) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-      models.React.destroy({
-        where: { id: react.id },
-      })
-        .then(() => {
-          return res.status(200).json({ message: 'Reaction has been deleted' });
-        })
-        .catch(() => {
-          return res.status(500).json({ message: 'Internal server error' });
-        });
-      return true;
-    })
-    .catch(() => {
-      return res.status(500).json({ message: 'Internal server error' });
+  try {
+    const react = await models.React.findOne({
+      where: { userId, postId, type },
     });
+    if (!react) {
+      return res.status(404).json({ message: 'Not found' });
+    }
+    const decodedToken = getDecodedToken(req);
+    if (!hasRights(decodedToken, react)) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    await models.Activity.destroy({ where: { type: 'react', postId, userId } });
+    await models.React.destroy({
+      where: { id: react.id },
+    });
+    return res.status(200).json({ message: 'Reaction has been deleted' });
+  } catch (_e) {
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };

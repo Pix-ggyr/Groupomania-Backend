@@ -4,7 +4,7 @@ const models = require('../models');
 // const validator = require('./validators/user.js');
 
 function hasRights(token, ressource) {
-  if (token.userId === ressource.id) {
+  if (token.id === ressource.id) {
     return true;
   }
   if (token.isAdmin) {
@@ -97,7 +97,7 @@ exports.register = (req, res) => {
                 userId: user.id,
                 type: 'register',
               });
-              const accessToken = generateAccessToken({ email: user.email, id: user.id });
+              const accessToken = generateAccessToken({ email: user.email, id: user.id, isAdmin: user.isAdmin });
               return res.status(201).json({ user, accessToken });
             })
             .catch(() => {
@@ -295,11 +295,12 @@ exports.updateUser = (req, res) => {
   return true;
 };
 
-exports.deleteUser = (req, res) => {
+exports.deleteUser = async (req, res) => {
   const { id } = req.params;
-  models.User.findOne({
-    where: { id },
-  }).then((user) => {
+  try {
+    const user = await models.User.findOne({
+      where: { id },
+    });
     if (!user) {
       return res.status(404).json({ message: 'Not found ' });
     }
@@ -307,17 +308,29 @@ exports.deleteUser = (req, res) => {
     if (!hasRights(decodedToken, user)) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-    models.User.destroy({
-      where: { id },
-    })
-      .then(() => {
-        return res.status(200).json({ message: 'User has been deleted' });
-      })
-      .catch(() => {
-        return res.status(500).json({ message: 'Internal server error' });
+    const posts = await models.Post.findAll({
+      where: { userId: user.id },
+    });
+    // eslint-disable-next-line no-restricted-syntax
+    for (const post of posts) {
+      // eslint-disable-next-line no-await-in-loop
+      await models.Activity.destroy({ where: { postId: post.id } });
+      // eslint-disable-next-line no-await-in-loop
+      await models.React.destroy({ where: { postId: post.id } });
+      // eslint-disable-next-line no-await-in-loop
+      await models.Post.destroy({
+        where: { id: post.id },
       });
-    return true;
-  });
+    }
+    await models.Activity.destroy({ where: { userId: user.id } });
+    await models.React.destroy({ where: { userId: user.id } });
+    await models.User.destroy({
+      where: { id },
+    });
+    return res.status(200).json({ message: 'User has been deleted' });
+  } catch (_e) {
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 exports.getAllUsers = (_req, res) => {

@@ -29,7 +29,7 @@ function verifyImage(image) {
 }
 
 function hasRights(token, ressource) {
-  if (token.userId === ressource.userId) {
+  if (token.id === ressource.userId) {
     return true;
   }
   if (token.isAdmin) {
@@ -165,11 +165,12 @@ exports.updatePost = (req, res) => {
   return true;
 };
 
-exports.deletePost = (req, res) => {
+exports.deletePost = async (req, res) => {
   const { id } = req.params;
-  models.Post.findOne({
-    where: { id },
-  }).then((post) => {
+  try {
+    const post = await models.Post.findOne({
+      where: { id },
+    });
     if (!post) {
       return res.status(404).json({ message: 'Not found' });
     }
@@ -177,16 +178,11 @@ exports.deletePost = (req, res) => {
     if (!hasRights(decodedToken, post)) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-
-    models.Post.destroy({
-      where: { id },
-    })
-      .then(() => {
-        return res.status(200).json({ message: 'Post has been deleted' });
-      })
-      .catch(() => {
-        return res.status(500).json({ message: 'Internal server error' });
-      });
-    return true;
-  });
+    await models.Activity.destroy({ where: { postId: id } });
+    await models.React.destroy({ where: { postId: id } });
+    await models.Post.destroy({ where: { id } });
+    return res.status(200).json({ message: 'Post has been deleted' });
+  } catch (_e) {
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };
