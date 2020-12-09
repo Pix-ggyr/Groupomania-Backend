@@ -65,8 +65,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
@@ -74,7 +74,7 @@
                   "properties": {
                     "error": {
                       "type": "String",
-                      "example": "Unauthorized"
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -130,22 +130,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "409": {
             "description": "Conflict - A user already exist with given email address.",
             "content": {
@@ -182,6 +166,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -208,22 +208,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "String",
-                      "example": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not found",
             "content": {
@@ -234,6 +218,22 @@
                     "error": {
                       "type": "String",
                       "example": "Not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -336,6 +336,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -391,6 +407,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -416,6 +448,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -423,7 +471,7 @@
     "/user/register": {
       "post": {
         "tags": ["user"],
-        "summary": "Create user",
+        "summary": "Register",
         "description": "",
         "consumes": ["application/json"],
         "produces": ["application/json"],
@@ -455,6 +503,22 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Bad request"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "409": {
             "description": "Conflict - A user already exist with given email address.",
             "content": {
@@ -476,24 +540,16 @@
               }
             }
           },
-          "422": {
-            "description": "Unprocessable Entity - Data given does not match prerequisites.",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "errors": {
-                      "type": "object",
-                      "properties": {
-                        "field": {
-                          "type": "array",
-                          "items": {
-                            "type": "string",
-                            "example": "Validation error"
-                          }
-                        }
-                      }
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -538,8 +594,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized - Invalid login credentials.",
+          "400": {
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -547,7 +603,23 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "Invalid login credentials."
+                      "example": "Bad request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -571,8 +643,8 @@
           "200": {
             "description": "OK"
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
@@ -580,7 +652,7 @@
                   "properties": {
                     "error": {
                       "type": "string",
-                      "example": "Unauthorized"
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -625,6 +697,22 @@
                     "error": {
                       "type": "String",
                       "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -680,16 +768,16 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {
+                    "error": {
                       "type": "string",
-                      "example": "Unauthorized"
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -721,22 +809,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "String",
-                      "example": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not found",
             "content": {
@@ -747,6 +819,22 @@
                     "error": {
                       "type": "String",
                       "example": "Not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -833,6 +921,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -888,6 +992,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -917,16 +1037,16 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "error": {
-                      "type": "String",
-                      "example": "Unauthorized"
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -935,7 +1055,7 @@
           }
         }
       },
-      "react": {
+      "post": {
         "tags": ["react"],
         "summary": "Create a react",
         "description": "",
@@ -982,8 +1102,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/json": {
                 "schema": {
@@ -991,7 +1111,23 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "Unauthorized"
+                      "example": "Conflict - This react already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -1023,22 +1159,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "String",
-                      "example": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not found",
             "content": {
@@ -1049,6 +1169,22 @@
                     "error": {
                       "type": "String",
                       "example": "Not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -1135,6 +1271,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -1159,22 +1311,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "String",
-                      "example": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not found",
             "content": {
@@ -1185,6 +1321,22 @@
                     "error": {
                       "type": "String",
                       "example": "Not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -1234,6 +1386,22 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1263,16 +1431,16 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "error": {
-                      "type": "String",
-                      "example": "Unauthorized"
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -1304,22 +1472,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "String",
-                      "example": "Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not found",
             "content": {
@@ -1330,6 +1482,22 @@
                     "error": {
                       "type": "String",
                       "example": "Not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Internal server error"
                     }
                   }
                 }
@@ -1370,8 +1538,8 @@
           },
           "avatar": {
             "type": "string",
-            "format": "uri",
-            "example": "http://domain.ext/avatar/file.png"
+            "format": "byte",
+            "example": "data:image/png;base64,..."
           },
           "createdAt": {
             "type": "string",
@@ -1405,9 +1573,11 @@
         "Register": {
           "type": "object",
           "properties": {
-            "name": {
-              "type": "string",
-              "maxLength": 63
+            "firstname": {
+              "type": "string"
+            },
+            "lastname": {
+              "type": "string"
             },
             "email": {
               "type": "string",
