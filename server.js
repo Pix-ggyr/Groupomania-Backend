@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-unused-vars
+require('dotenv').config();
 const http = require('http');
 const app = require('./app');
 
