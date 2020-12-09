@@ -16,7 +16,6 @@ function hasRights(token, ressource) {
   }
   return false;
 }
-
 function getDecodedToken(req) {
   const token = req.headers.authorization.split(' ')[1];
   const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
@@ -67,6 +66,7 @@ exports.getAllReacts = (req, res) => {
     });
   return true;
 };
+
 exports.getAReact = (req, res) => {
   const { id } = req.params;
   models.React.findOne({
@@ -83,6 +83,7 @@ exports.getAReact = (req, res) => {
     });
   return true;
 };
+
 exports.updateReact = (req, res) => {
   const { id } = req.params;
   models.React.findOne({
@@ -127,6 +128,7 @@ exports.updateReact = (req, res) => {
     });
   return true;
 };
+
 exports.deleteReact = (req, res) => {
   const { id } = req.params;
 

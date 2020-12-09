@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const models = require('../models');
-// const validator = require('./validators/user.js');
 
 function hasRights(token, ressource) {
   if (token.id === ressource.id) {
@@ -12,13 +11,11 @@ function hasRights(token, ressource) {
   }
   return false;
 }
-
 function getDecodedToken(req) {
   const token = req.headers.authorization.split(' ')[1];
   const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
   return decodedToken;
 }
-
 function generateAccessToken(data) {
   return jwt.sign(data, process.env.SECRET_TOKEN, { expiresIn: '3600s' });
 }
@@ -101,11 +98,11 @@ exports.register = (req, res) => {
               return res.status(201).json({ user, accessToken });
             })
             .catch(() => {
-              return res.status(400).json({ message: 'Bad request 5' });
+              return res.status(500).json({ message: 'Internal server error' });
             });
         })
         .catch(() => {
-          return res.status(400).json({ message: 'Bad request 6' });
+          return res.status(500).json({ message: 'Internal server error' });
         });
     }
   });
@@ -143,19 +140,16 @@ exports.login = (req, res) => {
         return res.status(200).json({ user: existingUser, accessToken });
       })
       .catch(() => {
-        return res.status(400).json({ message: 'Bad request' });
+        return res.status(500).json({ message: 'Internal server error' });
       });
     return true;
   });
   return true;
 };
 
-/* eslint-disable */
-exports.logout = (req, res) => {
-  const getToken = req.headers.authorization.split(' ')[1];
-  // rtfm revoke token jwt
-};
-/* eslint-enable */
+// exports.logout = (req, res) => {
+// const getToken = req.headers.authorization.split(' ')[1];
+// };
 
 exports.createUser = (req, res) => {
   const { email, firstname, lastname, password, bio, avatar } = req.body;
@@ -206,7 +200,7 @@ exports.createUser = (req, res) => {
             });
         })
         .catch(() => {
-          return res.status(400).json({ message: 'Bad request' });
+          return res.status(500).json({ message: 'Internal server error' });
         });
     }
   });
