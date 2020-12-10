@@ -1,5 +1,6 @@
 const models = require('../models');
 
+/* Get all activities */
 exports.getAllActivities = (_req, res) => {
   models.Activity.findAll()
     .then((activities) => {
@@ -11,6 +12,7 @@ exports.getAllActivities = (_req, res) => {
   return true;
 };
 
+/* Get only latest activities */
 exports.getLatestsActivities = (_req, res) => {
   models.Activity.findAll({
     limit: 15,
@@ -24,6 +26,7 @@ exports.getLatestsActivities = (_req, res) => {
     });
 };
 
+/* Get only one activity */
 exports.getAnActivity = (req, res) => {
   const { id } = req.params;
   models.Activity.findOne({

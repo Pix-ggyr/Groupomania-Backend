@@ -1,13 +1,13 @@
 const jwt = require('jsonwebtoken');
 const models = require('../models');
 
+/* Some nice and useful verification functions */
 function verifyTitle(title) {
   if (title === undefined && typeof title !== 'string') {
     return false;
   }
   return true;
 }
-
 function verifyContent(content) {
   if (content === undefined) {
     return false;
@@ -17,7 +17,6 @@ function verifyContent(content) {
   }
   return true;
 }
-
 function verifyImage(image) {
   if (image === undefined) {
     return false;
@@ -27,7 +26,6 @@ function verifyImage(image) {
   }
   return true;
 }
-
 function hasRights(token, ressource) {
   if (token.id === ressource.userId) {
     return true;
@@ -37,13 +35,13 @@ function hasRights(token, ressource) {
   }
   return false;
 }
-
 function getDecodedToken(req) {
   const token = req.headers.authorization.split(' ')[1];
   const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
   return decodedToken;
 }
 
+/* Create a post */
 exports.createPost = (req, res) => {
   const { title, content, image } = req.body;
 
@@ -84,6 +82,7 @@ exports.createPost = (req, res) => {
   return true;
 };
 
+/* Get all the posts */
 exports.getAllPosts = (_req, res) => {
   models.Post.findAll({
     order: [['createdAt', 'DESC']],
@@ -97,6 +96,7 @@ exports.getAllPosts = (_req, res) => {
   return true;
 };
 
+/* Get one post - to be used in the future */
 exports.getOnePost = (req, res) => {
   const { id } = req.params;
   models.Post.findOne({
@@ -114,6 +114,7 @@ exports.getOnePost = (req, res) => {
   return true;
 };
 
+/* Update your post - if admin, update whatever post */
 exports.updatePost = (req, res) => {
   const { id } = req.params;
   models.Post.findOne({
@@ -165,6 +166,7 @@ exports.updatePost = (req, res) => {
   return true;
 };
 
+/* Delete your post - if admin, delete whatever post */
 exports.deletePost = async (req, res) => {
   const { id } = req.params;
   try {

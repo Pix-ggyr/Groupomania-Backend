@@ -22,6 +22,7 @@ function getDecodedToken(req) {
   return decodedToken;
 }
 
+/* Create a reaction */
 exports.createReact = async (req, res) => {
   const { postId, type } = req.body;
 
@@ -55,6 +56,7 @@ exports.createReact = async (req, res) => {
   }
 };
 
+/* Get all users reactions */
 exports.getAllReacts = (req, res) => {
   const filter = req.query.postId ? { where: { postId: req.query.postId } } : {};
   models.React.findAll(filter)
@@ -67,6 +69,7 @@ exports.getAllReacts = (req, res) => {
   return true;
 };
 
+/* Get only one reaction */
 exports.getAReact = (req, res) => {
   const { id } = req.params;
   models.React.findOne({
@@ -84,6 +87,7 @@ exports.getAReact = (req, res) => {
   return true;
 };
 
+/* Update a reaction */
 exports.updateReact = (req, res) => {
   const { id } = req.params;
   models.React.findOne({
@@ -129,6 +133,7 @@ exports.updateReact = (req, res) => {
   return true;
 };
 
+/* Delete a reaction globally */
 exports.deleteReact = (req, res) => {
   const { id } = req.params;
 
@@ -156,6 +161,7 @@ exports.deleteReact = (req, res) => {
   return true;
 };
 
+/* Get a specific reaction and delete it */
 exports.findOneAndDelete = async (req, res) => {
   const { userId, postId, type } = req.query;
   try {

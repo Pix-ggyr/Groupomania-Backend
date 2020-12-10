@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const models = require('../models');
 
+/* Some useful functions */
 function hasRights(token, ressource) {
   if (token.id === ressource.id) {
     return true;
@@ -61,6 +62,7 @@ function verifyLastname(lastname) {
   return true;
 }
 
+/* Register a new user */
 exports.register = (req, res) => {
   const { firstname, lastname, email, password } = req.body;
 
@@ -109,6 +111,7 @@ exports.register = (req, res) => {
   return true;
 };
 
+/* Log a user in */
 exports.login = (req, res) => {
   const { email, password } = req.body;
   if (email === undefined || password === undefined) {
@@ -147,10 +150,12 @@ exports.login = (req, res) => {
   return true;
 };
 
+/* Feature in progress - to be used in the future */
 // exports.logout = (req, res) => {
 // const getToken = req.headers.authorization.split(' ')[1];
 // };
 
+/* Create an user (for admins only) */
 exports.createUser = (req, res) => {
   const { email, firstname, lastname, password, bio, avatar } = req.body;
 
@@ -207,6 +212,7 @@ exports.createUser = (req, res) => {
   return true;
 };
 
+/* Update a user */
 exports.updateUser = (req, res) => {
   const { id } = req.params;
   models.User.findOne({
@@ -289,6 +295,7 @@ exports.updateUser = (req, res) => {
   return true;
 };
 
+/* Delete a user */
 exports.deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
@@ -327,6 +334,7 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
+/* Get all users - to be used in the future */
 exports.getAllUsers = (_req, res) => {
   models.User.findAll()
     .then((users) => {
@@ -338,6 +346,7 @@ exports.getAllUsers = (_req, res) => {
   return true;
 };
 
+/* Get a single user - to be used in the future */
 exports.getOneUser = (req, res) => {
   const { id } = req.params;
   models.User.findOne({
@@ -355,6 +364,7 @@ exports.getOneUser = (req, res) => {
   return true;
 };
 
+/* Get your user profile */
 exports.getMyUser = (req, res) => {
   const token = req.headers.authorization.split(' ')[1];
   const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
