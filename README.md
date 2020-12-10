@@ -1,6 +1,7 @@
 # Groupomania-Backend
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9a4c7b86ff3b410caab4bc78696e1aaf)](https://app.codacy.com/gh/Pix-ggyr/Groupomania-Backend?utm_source=github.com&utm_medium=referral&utm_content=Pix-ggyr/Groupomania-Backend&utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9a4c7b86ff3b410caab4bc78696e1aaf)](https://app.codacy.com/gh/Pix-ggyr/Groupomania-Backend?utm_source=github.com&utm_medium=referral&utm_content=Pix-ggyr/Groupomania-Backend&utm_campaign=Badge_Grade)
 
 ## API pour l'application Groupomania Social Network
 
