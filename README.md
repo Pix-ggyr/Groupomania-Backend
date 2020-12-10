@@ -1,20 +1,52 @@
-# Groupomania-Backend
+# Groupomania (backend)
+
+Groupomania is a school project for OpenClassrooms Web Developer certification. The application is a social network MVP. The API has been developed with **[Express](https://expressjs.com/fr/)** and the database is managed with **[Sequelize v5](https://sequelize.org/)**.
+
+## Codacy checker
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9a4c7b86ff3b410caab4bc78696e1aaf)](https://app.codacy.com/gh/Pix-ggyr/Groupomania-Backend?utm_source=github.com&utm_medium=referral&utm_content=Pix-ggyr/Groupomania-Backend&utm_campaign=Badge_Grade)
 
-## API pour l'application Groupomania Social Network
+## Linter
 
-Access OpenApi Online Doc by clicking [here](https://pix-ggyr.github.io/Groupomania-Backend/)
-You can also access the repository by following this [link](https://github.com/Pix-ggyr/Groupomania-API-documentation)
+- [ESLint](https://eslint.org/)
+  - airbnb-based
 
-## Quick start
+## API Documentation
 
-### Projet setup
-```
-npm install
-```
+![Api documentation preview]()
 
-### Then, run Node server
-```
-npm run serve
-```
+Access OpenApi 3 Online documentation by clicking **[here](https://pix-ggyr.github.io/Groupomania-Backend/)**
+You can also access the documentation repository by following this **[link](https://github.com/Pix-ggyr/Groupomania-API-documentation)**
+
+## Getting started
+
+---
+
+### Clone the repositories:
+
+- Back part:
+
+`$ git clone https://github.com/Pix-ggyr/Groupomania-Backend.git`
+
+- Front part:
+
+`$ git clone https://github.com/Pix-ggyr/Groupomania-Front.git`
+And follow the instructions in the **[README file](https://github.com/Pix-ggyr/Groupomania-Front/blob/main/README.md)**
+
+### Install all the dependencies:
+
+`npm install`
+
+### Download **[PhpMyAdmin](https://https://www.phpmyadmin.net/)**
+
+Run it into your machine and contact me to get the .env file with the database access or create your own.
+
+## Launch Nodemon server
+
+---
+
+`npm install --s nodemon server`
+
+`nodemon server`
+
+And there you are ready to go.
