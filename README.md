@@ -13,7 +13,7 @@ Groupomania is a school project for OpenClassrooms Web Developer certification. 
 
 ## API Documentation
 
-![Api documentation preview]()
+![Api documentation preview](https://github.com/Pix-ggyr/Groupomania-Backend/blob/main/docs/assets/doc-api.gif?raw=true)
 
 Access OpenApi 3 Online documentation by clicking **[here](https://pix-ggyr.github.io/Groupomania-Backend/)**
 You can also access the documentation repository by following this **[link](https://github.com/Pix-ggyr/Groupomania-API-documentation)**
