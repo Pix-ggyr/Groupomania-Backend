@@ -15,8 +15,8 @@ Groupomania is a school project for OpenClassrooms Web Developer certification. 
 
 ![Api documentation preview](https://github.com/Pix-ggyr/Groupomania-Backend/blob/main/docs/assets/doc-api.gif?raw=true)
 
-Access OpenApi 3 Online documentation by clicking **[here](https://pix-ggyr.github.io/Groupomania-Backend/)**
-You can also access the documentation repository by following this **[link](https://github.com/Pix-ggyr/Groupomania-API-documentation)**
+Access OpenApi 3 Online documentation by clicking **[here](https://pix-ggyr.github.io/Groupomania-Backend/)**.
+You can also access the documentation repository by following this **[link](https://github.com/Pix-ggyr/Groupomania-API-documentation)**.
 
 ## Getting started
 
@@ -31,6 +31,7 @@ You can also access the documentation repository by following this **[link](http
 - Front part:
 
 `$ git clone https://github.com/Pix-ggyr/Groupomania-Front.git`
+
 And follow the instructions in the **[README file](https://github.com/Pix-ggyr/Groupomania-Front/blob/main/README.md)**
 
 ### Install all the dependencies:
@@ -39,7 +40,8 @@ And follow the instructions in the **[README file](https://github.com/Pix-ggyr/G
 
 ### Download **[PhpMyAdmin](https://https://www.phpmyadmin.net/)**
 
-Run it into your machine and contact me to get the .env file with the database access or create your own.
+Create your own database and configure a _.env_ file.
+Or import the database in the root folder 'groupomania-db' and ask me for the _.env_ file.
 
 ## Launch Nodemon server
 
